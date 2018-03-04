@@ -21,9 +21,15 @@
     <ClCompile Include="CShader.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="CCamera.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CShader.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="CCamera.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,14 +1,12 @@
 #version 460 core
 
-uniform	vec4 Offset;
-uniform	vec4 Color;
+uniform mat4 ProjectionMatrix;
+uniform mat4 ModelViewMatrix;
+uniform vec4 Color;
 
-in vec2 vPosition;
-
-out float gradient;
+in vec3 vPosition;
 
 void main ()
 {
-	gradient = vPosition.x + 0.5;
-	gl_Position = vec4 (vPosition, 0, 1) + Offset;
+	gl_Position = ProjectionMatrix * ModelViewMatrix * vec4 (vPosition, 1);
 }

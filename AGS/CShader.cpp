@@ -1,5 +1,6 @@
 #include "CShader.h"
 bool fileF;
+
 std::vector<std::string> LoadFile(char *FileName, int &size) {
 	std::string str;
 	std::vector<std::string> file;
@@ -119,6 +120,48 @@ int CShader::Link(bool DebugOutput)
 	return 0;
 }
 
+/*
+int	k = glGetUniformLocation(Program, name);
+		if (k < 0) return;
+		glUseProgram(Program);
+		glUniform4fv(k, 1, value_ptr(value));
+*/
+void CShader::SetUniform(std::string name, vec4 &value)
+{
+	int uniformID;
+	auto variable = UniformVariables.find(name);
+	if (variable != UniformVariables.end())
+	{
+		uniformID = variable->second;
+	}
+	else
+	{
+		uniformID = glGetUniformLocation(Program, name.c_str());
+		UniformVariables.insert(std::pair<std::string, int>(name, uniformID));
+	}
+	if (uniformID < 0) return;
+	glUseProgram(Program);
+	glUniform4fv(uniformID, 1, value_ptr(value));
+}
+
+void CShader::SetUniform(std::string name, mat4 &value)
+{
+	int uniformID;
+	auto variable = UniformVariables.find(name);
+	if (variable != UniformVariables.end())
+	{
+		uniformID = variable->second;
+	}
+	else
+	{
+		uniformID = glGetUniformLocation(Program, name.c_str());
+		UniformVariables.insert(std::pair<std::string, int>(name, uniformID));
+	}
+	if (uniformID < 0) return;
+	glUseProgram(Program);
+	glUniformMatrix4fv(uniformID, 1, GL_FALSE, value_ptr(value));
+}
+
 void CShader::Activate(void)
 {
 	glUseProgram(Program);
@@ -128,4 +171,3 @@ void CShader::Deactivate(void)
 {
 	glUseProgram(0);
 }
-

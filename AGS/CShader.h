@@ -7,6 +7,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <map>
 
 #include "glew.h"
 #include "GL/freeglut.h"
@@ -30,6 +31,8 @@ private:
 	// шейдерная программа (шейдер)
 	GLuint	Program;
 
+	std::map<std::string, int> UniformVariables;
+
 public:
 	int LoadShader(char *VertexFileName, int type, bool DebugOutput = true);
 	// загрузить вершинный шейдер
@@ -51,11 +54,6 @@ public:
 	};
 
 	// запись вектора из 4-х комопнент в uniform-переменную
-	void SetUniformVec4(char *name, vec4 value)
-	{
-		int	k = glGetUniformLocation(Program, name);
-		if (k < 0) return;
-		glUseProgram(Program);
-		glUniform4fv(k, 1, value_ptr(value));
-	}
+	void SetUniform(std::string name, vec4 &value);
+	void SetUniform(std::string name, mat4 &value);
 };
