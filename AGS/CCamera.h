@@ -12,6 +12,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
 using namespace glm;
 class CCamera
 {
@@ -22,8 +23,7 @@ class CCamera
 public:
 	// конструктор по умолчанию
 	CCamera(void);
-	// деструктор
-	~CCamera(void);
+
 	// установка матрицы проекции
 	void SetProjectionMatrix(float fovy, float aspect, float zNear, float zFar);
 	// получение матрицы проекции

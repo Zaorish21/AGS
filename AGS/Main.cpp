@@ -8,13 +8,15 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "CShader.h"
+#include "CCamera.h"
 using namespace glm;
 
 // используемый шейдер (пока только один)
 CShader		Shader;
+CCamera		Camera;
 
-
-
+LARGE_INTEGER oldValue, newValue, frequency;
+double simulationTimePassed;
 
 void DrawCube(CShader &shader) {
 	// переменные для вывода объекта (прямоугольника из двух треугольников)
@@ -89,7 +91,21 @@ void DrawCube(CShader &shader) {
 	glDrawArrays(GL_TRIANGLES, 0, VertexCount);
 }
 
+void DrawCubeIn(vec4 Position, vec4 Color, mat4 ViewMatrix)
+{
+	mat4 ModelMatrix = mat4(
+		vec4(1, 0, 0, 0),
+		vec4(0, 1, 0, 0),
+		vec4(0, 0, 1, 0),
+		Position);
 
+	mat4 ModelViewMatrix = ViewMatrix * ModelMatrix;
+	Shader.SetUniform("ModelViewMatrix", ModelViewMatrix);
+
+	Shader.SetUniform("Color", Color);
+
+	DrawCube(Shader);
+}
 
 // функция вызывается при перерисовке окна
 // в том числе и принудительно, по командам glutPostRedisplay
@@ -103,36 +119,36 @@ void Display(void) {
 	glCullFace(GL_BACK);
 	// активируем шейдер
 	Shader.Activate();
+
 	// получаем матрицу проекции
 	mat4 ProjectionMatrix;
-	ProjectionMatrix = perspective(radians(35.0), 800.0 / 600.0, 0.1, 200.0);
+	ProjectionMatrix = Camera.GetProjectionMatrix();
 	// устанавливаем матрицу проекции
 	Shader.SetUniform("ProjectionMatrix", ProjectionMatrix);
+
 	// получаем матрицу наблюдения
-	mat4 ViewMatrix;
-	// позиция камеры (0, 5, 10)
-	vec3 Eye = vec3(0.0, 5.0, 10.0);
-	// точка, в которую направлена камера ‐ (0, 0, 0);
-	vec3 Center = vec3(0, 0, 0);
-	// примерный вектор "вверх" (0, 1, 0)
-	vec3 Up = vec3(0, 1.0, 0);
-	// матрица камеры
-	ViewMatrix = lookAt(Eye, Center, Up);
-	// ВЫВОДИМ ПЕРВУЮ МОДЕЛЬ:
-	// формируем матрицу модели - модель располагается в точке (3,0,0) без поворота
-	mat4 ModelMatrix1 = mat4(
-		vec4(1, 0, 0, 0), // 1-ый столбец: направление оси ox
-		vec4(0, 1, 0, 0), // 2-ой столбец: направление оси oy
-		vec4(0, 0, 1, 0), // 3-ий столбец: направление оси oz
-		vec4(3, 0, 0, 50)); // 4-ый столбец: позиция объекта (начала координат)
-						   // устанавливаем матрицу наблюдения модели
-	mat4 ModelViewMatrix1 = ViewMatrix * ModelMatrix1;
-	Shader.SetUniform("ModelViewMatrix", ModelViewMatrix1);
-	// устанавливаем uniform-переменную отвечающую за цвет объекта (фрагментов)
-	vec4 Color1 = vec4(1.0, 0.0, 0.0, 1.0);
-	Shader.SetUniform("Color", Color1);
-	// вывод объекта
-	DrawCube(Shader);
+	mat4 ViewMatrix = Camera.GetViewMatrix();
+
+	vec4 Color = vec4(1.0, 0.0, 1.0, 1.0);
+	vec4 Pos = vec4(0.0, 0.0, 0.0, 1.0);
+	DrawCubeIn(Pos, Color, ViewMatrix);
+
+	Color = vec4(1.0, 0.0, 0.0, 1.0);
+	Pos = vec4(3.0, 0.0, 0.0, 1.0);
+	DrawCubeIn(Pos, Color, ViewMatrix);
+
+	Color = vec4(1.0, 0.7, 0.0, 1.0);
+	Pos = vec4(0.0, -3.0, 0.0, 1.0);
+	DrawCubeIn(Pos, Color, ViewMatrix);
+
+	Color = vec4(0.0, 0.0, 0.0, 1.0);
+	Pos = vec4(3.0, 2.5, 3.0, 1.0);
+	DrawCubeIn(Pos, Color, ViewMatrix);
+
+	Color = vec4(0.0, 1.0, 1.0, 1.0);
+	Pos = vec4(3.0, 0, 3.0, 1.0);
+	DrawCubeIn(Pos, Color, ViewMatrix);
+
 	glutSwapBuffers();
 };
 
@@ -141,11 +157,17 @@ void Reshape(int w, int h)
 {
 	// установить новую область просмотра, равную всей области окна
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	Camera.SetProjectionMatrix(35.0, (float)w / h, 1, 100);
 };
 
 // функция вызывается когда процессор простаивает, т.е. максимально часто
 void Simulation(void)
 {
+	QueryPerformanceCounter(&newValue);
+	QueryPerformanceFrequency(&frequency);
+	simulationTimePassed = (double)(newValue.QuadPart - oldValue.QuadPart) / frequency.QuadPart;
+	oldValue = newValue;
+
 	//	ПЕРЕРИСОВАТЬ ОКНО
 	glutPostRedisplay();
 };
