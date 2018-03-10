@@ -52,6 +52,7 @@ public:
 	// вращение в горизонтальной и вертикальной плоскости
 	void Rotate(float dHorizAngle, float dVertAngle);
 	// приближение/удаление
+	void GetUp();
 	void Zoom(float dR);
 	void Saving();
 };
