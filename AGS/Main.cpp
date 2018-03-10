@@ -16,6 +16,7 @@ CShader		Shader;
 CCamera		Camera;
 
 LARGE_INTEGER oldValue, newValue, frequency;
+POINT newPossition, oldPossition;
 double simulationTimePassed;
 
 void DrawCube(CShader &shader) {
@@ -137,17 +138,7 @@ void Display(void) {
 	Pos = vec4(3.0, 0.0, 0.0, 1.0);
 	DrawCubeIn(Pos, Color, ViewMatrix);
 
-	Color = vec4(1.0, 0.7, 0.0, 1.0);
-	Pos = vec4(0.0, -3.0, 0.0, 1.0);
-	DrawCubeIn(Pos, Color, ViewMatrix);
 
-	Color = vec4(0.0, 0.0, 0.0, 1.0);
-	Pos = vec4(3.0, 2.5, 3.0, 1.0);
-	DrawCubeIn(Pos, Color, ViewMatrix);
-
-	Color = vec4(0.0, 1.0, 1.0, 1.0);
-	Pos = vec4(3.0, 0, 3.0, 1.0);
-	DrawCubeIn(Pos, Color, ViewMatrix);
 
 	glutSwapBuffers();
 };
@@ -157,8 +148,14 @@ void Reshape(int w, int h)
 {
 	// установить новую область просмотра, равную всей области окна
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-	Camera.SetProjectionMatrix(35.0, (float)w / h, 1, 100);
+	Camera.SetProjectionMatrix(radians(35.0), (float)w / h, 1, 100);
 };
+
+void MouseWheel(int wheel, int direction, int x, int y)
+{
+	Camera.Zoom(direction);
+}
+
 
 // функция вызывается когда процессор простаивает, т.е. максимально часто
 void Simulation(void)
@@ -168,9 +165,30 @@ void Simulation(void)
 	simulationTimePassed = (double)(newValue.QuadPart - oldValue.QuadPart) / frequency.QuadPart;
 	oldValue = newValue;
 
-	//	ПЕРЕРИСОВАТЬ ОКНО
+	bool Forward = GetAsyncKeyState(VK_UP);
+	bool Back = GetAsyncKeyState(VK_DOWN);
+	bool Left = GetAsyncKeyState(VK_LEFT);
+	bool Right = GetAsyncKeyState(VK_RIGHT);
+
+	float dForward = (int(Forward) - int(Back))*simulationTimePassed;
+	float dRigth = (int(Right) - int(Left))*simulationTimePassed;
+	
+	GetCursorPos(&newPossition);
+	float dHorizAngle = oldPossition.x - newPossition.x;
+	float dVertAngle = oldPossition.y - newPossition.y;
+	oldPossition = newPossition;
+
+	Camera.MoveOXZ(dForward, dRigth);
+	Camera.Rotate(dHorizAngle, dVertAngle);
 	glutPostRedisplay();
 };
+
+
+void Close()
+{
+	Camera.Saving();
+}
+
 
 int main(int argc, char **argv)
 {
@@ -208,9 +226,13 @@ int main(int argc, char **argv)
 	glutDisplayFunc(Display);
 	// устанавливаем функцию, которая будет вызываться при изменении размеров окна
 	glutReshapeFunc(Reshape);
+	glutMouseWheelFunc(MouseWheel);
+	
 	// устанавливаем функцию которая вызывается всякий раз, когда процессор простаивает
 	glutIdleFunc(Simulation);
 	// основной цикл обработки сообщений ОС
+	glutCloseFunc(Close);
 	glutMainLoop();
+	
 	return 0;
 };

@@ -3,6 +3,7 @@
 #include <windows.h>
 #include "stdio.h"
 
+#include <fstream>
 #include <iostream>
 #include <vector>
 
@@ -13,13 +14,29 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+
 using namespace glm;
+
+const float PI = 3.14;
+const float THETA_MAX = radians(85.0);
+const float THETA_MIN = radians(5.0);
+
 class CCamera
 {
-		// матрица проекции
+	// матрица проекции
 	mat4 ProjectionMatrix;
 	// матрица наблюдения
 	mat4 ViewMatrix;
+
+	vec3 Eye ;
+	vec3 Center;
+	vec3 Up;
+
+	float radius;
+	float fi;
+	float theta;
+	float Speed = 5.0;
+
 public:
 	// конструктор по умолчанию
 	CCamera(void);
@@ -36,4 +53,5 @@ public:
 	void Rotate(float dHorizAngle, float dVertAngle);
 	// приближение/удаление
 	void Zoom(float dR);
+	void Saving();
 };
