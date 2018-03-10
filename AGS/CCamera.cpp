@@ -5,7 +5,7 @@ CCamera::CCamera(void)
 	std::ifstream file("Camera.txt");
 	if (!file.is_open())
 	{
-		radius = 40;
+		radius = 20;
 		theta = radians(5.0);
 		fi = 0;
 		Center = vec3(0, 0, 0);
@@ -32,11 +32,13 @@ void CCamera::MoveOXZ(float dForward, float dRight)
 {
 	dForward = dForward * Speed;
 	dRight = dRight * Speed;
-	vec3 VForward = normalize(Center - (Eye + Center));
+	vec3 VForward = normalize(-Eye);
+	
 	vec3 DeltaF = vec3(VForward.x * dForward, 0, VForward.z * dForward);
+	
 	vec3 DeltaR = normalize(cross(VForward, Up));
 	DeltaR = vec3(DeltaR.x * dRight, 0, DeltaR.z * dRight);
-	std::cout << DeltaR.x << ' ' << DeltaR.y << ' ' << DeltaR.z<<std::endl;
+	
 	Center = Center + DeltaF + DeltaR;
 
 	ViewMatrix = lookAt(Eye + Center, Center, Up);
