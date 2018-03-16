@@ -1,23 +1,7 @@
-﻿#include <cstdio>
+﻿#include "Data.h"
+#include "Simulation.h"
 
-#include "glew.h"
-#include "GL/freeglut.h"
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-#include "CShader.h"
-#include "CCamera.h"
 using namespace glm;
-
-// используемый шейдер (пока только один)
-CShader		Shader;
-CCamera		Camera;
-
-LARGE_INTEGER oldValue, newValue, frequency;
-POINT newPossition, oldPossition;
-double simulationTimePassed;
 
 void DrawCube(CShader &shader) {
 	// переменные для вывода объекта (прямоугольника из двух треугольников)
@@ -138,7 +122,17 @@ void Display(void) {
 	Pos = vec4(3.0, 0.0, 0.0, 1.0);
 	DrawCubeIn(Pos, Color, ViewMatrix);
 
+	Color = vec4(0.5, 0.0, 0.5, 1.0);
+	Pos = vec4(3.0, 5.0, 0.0, 1.0);
+	DrawCubeIn(Pos, Color, ViewMatrix);
 
+	Color = vec4(1.0, 0.0, 0.8, 1.0);
+	Pos = vec4(3.0, -5.0, 4.0, 1.0);
+	DrawCubeIn(Pos, Color, ViewMatrix);
+
+	Color = vec4(1.0, 0.6, 0.9, 1.0);
+	Pos = vec4(-3.0, 0.0, 17.0, 1.0);
+	DrawCubeIn(Pos, Color, ViewMatrix);
 
 	glutSwapBuffers();
 };
@@ -164,22 +158,8 @@ void Simulation(void)
 	QueryPerformanceFrequency(&frequency);
 	simulationTimePassed = (double)(newValue.QuadPart - oldValue.QuadPart) / frequency.QuadPart;
 	oldValue = newValue;
-
-	bool Forward = GetAsyncKeyState(VK_UP);
-	bool Back = GetAsyncKeyState(VK_DOWN);
-	bool Left = GetAsyncKeyState(VK_LEFT);
-	bool Right = GetAsyncKeyState(VK_RIGHT);
-
-	float dForward = (int(Forward) - int(Back))*simulationTimePassed;
-	float dRigth = (int(Right) - int(Left))*simulationTimePassed;
+	CameraSimulation(simulationTimePassed);
 	
-	GetCursorPos(&newPossition);
-	float dHorizAngle = oldPossition.x - newPossition.x;
-	float dVertAngle = oldPossition.y - newPossition.y;
-	oldPossition = newPossition;
-
-	Camera.MoveOXZ(dForward, dRigth);
-	Camera.Rotate(dHorizAngle, dVertAngle);
 	glutPostRedisplay();
 };
 
