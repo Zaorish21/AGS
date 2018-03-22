@@ -121,16 +121,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CCamera.cpp" />
+    <ClCompile Include="CMesh.cpp" />
     <ClCompile Include="CShader.cpp" />
     <ClCompile Include="Data.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Simulation.cpp" />
+    <ClCompile Include="СResourceManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCamera.h" />
+    <ClInclude Include="CMesh.h" />
     <ClInclude Include="CShader.h" />
     <ClInclude Include="Data.h" />
     <ClInclude Include="Simulation.h" />
+    <ClInclude Include="СResourceManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

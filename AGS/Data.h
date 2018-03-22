@@ -10,10 +10,18 @@
 
 #include "CShader.h"
 #include "CCamera.h"
+#include "CMesh.h"
+#include "ÑResourceManager.h"
 
 extern CShader		Shader;
 extern CCamera		Camera;
+extern CMesh		Mesh;
 
 extern LARGE_INTEGER oldValue, newValue, frequency;
 extern POINT newPossition, oldPossition;
 extern double simulationTimePassed;
+
+extern int MeshId[3];
+
+void MeshesInit();
+void ShaderInit();

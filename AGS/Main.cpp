@@ -3,98 +3,12 @@
 
 using namespace glm;
 
-void DrawCube(CShader &shader) {
-	// переменные для вывода объекта (прямоугольника из двух треугольников)
-	static GLuint VAO_Index = 0; // индекс VAO-буфера
-	static GLuint VBO_Index = 0; // индекс VBO-буфера
-	static int VertexCount = 0; // количество вершин
-	static bool init = true;
-	if (init) {
-		// создание и заполнение VBO
-		glGenBuffers(1, &VBO_Index);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO_Index);
-		GLfloat Verteces[] = {
-			// передняя грань
-			-0.5, +0.5, +0.5,
-			-0.5, -0.5, +0.5,
-			+0.5, +0.5, +0.5,
-			+0.5, +0.5, +0.5,
-			-0.5, -0.5, +0.5,
-			+0.5, -0.5, +0.5,
-			// задняя грань
-			+0.5, +0.5, -0.5,
-			+0.5, -0.5, -0.5,
-			-0.5, +0.5, -0.5,
-			-0.5, +0.5, -0.5,
-			+0.5, -0.5, -0.5,
-			-0.5, -0.5, -0.5,
-			// правая грань
-			+0.5, -0.5, +0.5,
-			+0.5, -0.5, -0.5,
-			+0.5, +0.5, +0.5,
-			+0.5, +0.5, +0.5,
-			+0.5, -0.5, -0.5,
-			+0.5, +0.5, -0.5,
-			// левая грань
-			-0.5, +0.5, +0.5,
-			-0.5, +0.5, -0.5,
-			-0.5, -0.5, +0.5,
-			-0.5, -0.5, +0.5,
-			-0.5, +0.5, -0.5,
-			-0.5, -0.5, -0.5,
-			// верхняя грань
-			-0.5, +0.5, -0.5,
-			-0.5, +0.5, +0.5,
-			+0.5, +0.5, -0.5,
-			+0.5, +0.5, -0.5,
-			-0.5, +0.5, +0.5,
-			+0.5, +0.5, +0.5,
-			// нижняя грань
-			-0.5, -0.5, +0.5,
-			-0.5, -0.5, -0.5,
-			+0.5, -0.5, +0.5,
-			+0.5, -0.5, +0.5,
-			-0.5, -0.5, -0.5,
-			+0.5, -0.5, -0.5
-		};
-		glBufferData(GL_ARRAY_BUFFER, sizeof(Verteces), Verteces, GL_STATIC_DRAW);
-		// создание VAO
-		glGenVertexArrays(1, &VAO_Index);
-		glBindVertexArray(VAO_Index);
-		// заполнение VAO
-		glBindBuffer(GL_ARRAY_BUFFER, VBO_Index);
-		int k = shader.GetAttribLocation((char*)"vPosition");
-		glVertexAttribPointer(k, 3, GL_FLOAT, GL_FALSE, 0, 0);
-		glEnableVertexAttribArray(k);
-		// "отвязка" буфера VAO, чтоб случайно не испортить
-		glBindVertexArray(0);
-		// указание количество вершин
-		VertexCount = 6 * 6;
-		init = false;
-	}
-	glBindVertexArray(VAO_Index);
-	glDrawArrays(GL_TRIANGLES, 0, VertexCount);
-}
 
-void DrawCubeIn(vec4 Position, vec4 Color, mat4 ViewMatrix)
-{
-	mat4 ModelMatrix = mat4(
-		vec4(1, 0, 0, 0),
-		vec4(0, 1, 0, 0),
-		vec4(0, 0, 1, 0),
-		Position);
-
-	mat4 ModelViewMatrix = ViewMatrix * ModelMatrix;
-	Shader.SetUniform("ModelViewMatrix", ModelViewMatrix);
-
-	Shader.SetUniform("Color", Color);
-
-	DrawCube(Shader);
-}
 
 // функция вызывается при перерисовке окна
 // в том числе и принудительно, по командам glutPostRedisplay
-void Display(void) {
+void Display(void)
+{
 	// отчищаем буфер цвета
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -104,36 +18,64 @@ void Display(void) {
 	glCullFace(GL_BACK);
 	// активируем шейдер
 	Shader.Activate();
-
 	// получаем матрицу проекции
-	mat4 ProjectionMatrix;
-	ProjectionMatrix = Camera.GetProjectionMatrix();
+	mat4 ProjectionMatrix = Camera.GetProjectionMatrix();
 	// устанавливаем матрицу проекции
 	Shader.SetUniform("ProjectionMatrix", ProjectionMatrix);
-
 	// получаем матрицу наблюдения
 	mat4 ViewMatrix = Camera.GetViewMatrix();
-
-	vec4 Color = vec4(1.0, 0.0, 1.0, 1.0);
-	vec4 Pos = vec4(0.0, 0.0, 0.0, 1.0);
-	DrawCubeIn(Pos, Color, ViewMatrix);
-
-	Color = vec4(1.0, 0.0, 0.0, 1.0);
-	Pos = vec4(3.0, 0.0, 0.0, 1.0);
-	DrawCubeIn(Pos, Color, ViewMatrix);
-
-	Color = vec4(0.5, 0.0, 0.5, 1.0);
-	Pos = vec4(3.0, 5.0, 0.0, 1.0);
-	DrawCubeIn(Pos, Color, ViewMatrix);
-
-	Color = vec4(1.0, 0.0, 0.8, 1.0);
-	Pos = vec4(3.0, -5.0, 4.0, 1.0);
-	DrawCubeIn(Pos, Color, ViewMatrix);
-
-	Color = vec4(1.0, 0.6, 0.9, 1.0);
-	Pos = vec4(-3.0, 0.0, 17.0, 1.0);
-	DrawCubeIn(Pos, Color, ViewMatrix);
-
+	// ВЫВОДИМ ПЕРВУЮ МОДЕЛЬ:
+	// формируем матрицу модели (единичная матрица)
+	// модель располагается в точке (3,0,0) без поворота
+	mat4 ModelMatrix1 = mat4(
+		vec4(1, 0, 0, 0), // 1‐ый столбец: направление оси ox
+		vec4(0, 1, 0, 0), // 2‐ой столбец: направление оси oy
+		vec4(0, 0, 1, 0), // 3‐ий столбец: направление оси oz
+		vec4(0, 0, 0, 1)); // 4‐ый столбец: позиция объекта (начала координат)
+						   // устанавливаем матрицу наблюдения модели
+	mat4 ModelViewMatrix1 = ViewMatrix * ModelMatrix1;
+	Shader.SetUniform("ModelViewMatrix", ModelViewMatrix1);
+	// устанавливаем uniform‐переменную отвечающую за цвет объекта(фрагментов)
+	vec4 Color1 = vec4(1.0, 0.0, 0.0, 1.0);
+	Shader.SetUniform("Color", Color1);
+	// вывод объекта
+	CMesh* mesh = CResourceManager::Instance().GetMesh(MeshId[0]);
+	if (mesh != nullptr) mesh->Render();
+	// ВЫВОДИМ ВТОРУЮ МОДЕЛЬ:
+	// формируем матрицу модели (единичная матрица)
+	// модель располагается в точке (3,0,0) без поворота
+	mat4 ModelMatrix2 = mat4(
+		vec4(1, 0, 0, 0), // 1‐ый столбец: направление оси ox
+		vec4(0, 1, 0, 0), // 2‐ой столбец: направление оси oy
+		vec4(0, 0, 1, 0), // 3‐ий столбец: направление оси oz
+		vec4(10, 0, 0, 1)); // 4‐ый столбец: позиция объекта (начала координат)
+							// устанавливаем матрицу наблюдения модели
+	mat4 ModelViewMatrix2 = ViewMatrix * ModelMatrix2;
+	Shader.SetUniform("ModelViewMatrix", ModelViewMatrix2);
+	// устанавливаем uniform‐переменную отвечающую за цвет объекта(фрагментов)
+	vec4 Color2 = vec4(0.0, 0.0, 1.0, 1.0);
+	Shader.SetUniform("Color", Color2);
+	// вывод объекта
+	mesh = CResourceManager::Instance().GetMesh(MeshId[1]);
+	if (mesh != nullptr) mesh->Render();
+	// ВЫВОДИМ ТРЕТЬЮ МОДЕЛЬ:
+	// формируем матрицу модели (единичная матрица)
+	// модель располагается в точке (3,0,0) без поворота
+	mat4 ModelMatrix3 = mat4(
+		vec4(1, 0, 0, 0), // 1‐ый столбец: направление оси ox
+		vec4(0, 1, 0, 0), // 2‐ой столбец: направление оси oy
+		vec4(0, 0, 1, 0), // 3‐ий столбец: направление оси oz
+		vec4(-10, -0.8, 0, 1)); // 4‐ый столбец: позиция объекта (начала координат)
+								// устанавливаем матрицу наблюдения модели
+	mat4 ModelViewMatrix3 = ViewMatrix * ModelMatrix3;
+	Shader.SetUniform("ModelViewMatrix", ModelViewMatrix3);
+	// устанавливаем uniform‐переменную отвечающую за цвет объекта(фрагментов)
+	vec4 Color3 = vec4(0.0, 0.0, 0.0, 1.0);
+	Shader.SetUniform("Color", Color3);
+	// вывод объекта
+	mesh = CResourceManager::Instance().GetMesh(MeshId[2]);
+	if (mesh != nullptr) mesh->Render();
+	// смена переднего и заднего буферов
 	glutSwapBuffers();
 };
 
@@ -197,11 +139,9 @@ int main(int argc, char **argv)
 	printf("OpenGL Version = %s\n\n", glGetString(GL_VERSION));
 
 	// загрузка шейдера
-	Shader.LoadVertexShader((char*)"SHADER\\Example.vsh");
-	Shader.LoadFragmentShader((char*)"SHADER\\Example.fsh");
-	Shader.Link();
+	ShaderInit();
 	// инициализация объекта для вывода
-
+	MeshesInit();
 	// устанавливаем функцию, которая будет вызываться для перерисовки окна
 	glutDisplayFunc(Display);
 	// устанавливаем функцию, которая будет вызываться при изменении размеров окна
