@@ -5,9 +5,9 @@ CCamera::CCamera(void)
 	std::ifstream file("Camera.txt");
 	if (!file.is_open())
 	{
-		radius = 20;
-		theta = radians(5.0);
-		fi = 0;
+		radius = 25.0;
+		theta = radians(85.0);
+		fi = radians(5.0);
 		Center = vec3(0, 0, 0);
 	}
 	else

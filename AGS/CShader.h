@@ -1,8 +1,5 @@
 #pragma once
 
-#include <windows.h>
-#include "stdio.h"
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -54,6 +51,7 @@ public:
 	};
 
 	// запись вектора из 4-х комопнент в uniform-переменную
+	void SetUniform(std::string name, GLfloat &value);
 	void SetUniform(std::string name, vec4 &value);
 	void SetUniform(std::string name, mat4 &value);
 };

@@ -120,12 +120,25 @@ int CShader::Link(bool DebugOutput)
 	return 0;
 }
 
-/*
-int	k = glGetUniformLocation(Program, name);
-		if (k < 0) return;
-		glUseProgram(Program);
-		glUniform4fv(k, 1, value_ptr(value));
-*/
+void CShader::SetUniform(std::string name, GLfloat &value)
+{
+	int uniformID;
+	auto variable = UniformVariables.find(name);
+	if (variable != UniformVariables.end())
+	{
+		uniformID = variable->second;
+	}
+	else
+	{
+		uniformID = glGetUniformLocation(Program, name.c_str());
+		UniformVariables.insert(std::pair<std::string, int>(name, uniformID));
+	}
+	if (uniformID < 0) return;
+	glUseProgram(Program);
+	glUniform1f(uniformID, value);
+}
+
+
 void CShader::SetUniform(std::string name, vec4 &value)
 {
 	int uniformID;

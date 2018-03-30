@@ -1,19 +1,12 @@
 ﻿#pragma once
-#pragma once
-#include <windows.h>
-#include "stdio.h"
 
-#include <fstream>
-#include <iostream>
+#include "CMesh.h"
+
 #include <vector>
 #include <map>
-#include "CMesh.h"
-#include "glew.h"
-#include "GL/freeglut.h"
+#include <string>
+#include <iostream>
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 class CResourceManager
 {

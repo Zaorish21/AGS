@@ -23,6 +23,7 @@ const float THETA_MIN = radians(5.0);
 
 class CCamera
 {
+	
 	// матрица проекции
 	mat4 ProjectionMatrix;
 	// матрица наблюдения
