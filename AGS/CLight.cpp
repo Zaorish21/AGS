@@ -39,3 +39,13 @@ vec4 &CLight::getSpecular()
 {
 	return specular;
 }
+
+bool CLight::operator==(CLight & a)
+{
+	return ((position == a.position)&&(ambient == a.position)&&(diffuse==a.diffuse)&&(specular==a.specular));
+}
+
+bool CLight::operator!=(CLight & a)
+{
+	return ((position != a.position) || (ambient != a.ambient) || (diffuse != a.diffuse) || (specular != a.specular));
+}

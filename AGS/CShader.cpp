@@ -175,6 +175,24 @@ void CShader::SetUniform(std::string name, mat4 &value)
 	glUniformMatrix4fv(uniformID, 1, GL_FALSE, value_ptr(value));
 }
 
+void CShader::SetUniform(std::string name, int value)
+{
+	int uniformID;
+	auto variable = UniformVariables.find(name);
+	if (variable != UniformVariables.end())
+	{
+		uniformID = variable->second;
+	}
+	else
+	{
+		uniformID = glGetUniformLocation(Program, name.c_str());
+		UniformVariables.insert(std::pair<std::string, int>(name, uniformID));
+	}
+	if (uniformID < 0) return;
+	glUseProgram(Program);
+	glUniform1i(uniformID, value);
+}
+
 void CShader::Activate(void)
 {
 	glUseProgram(Program);

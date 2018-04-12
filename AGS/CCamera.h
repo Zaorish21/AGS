@@ -56,4 +56,7 @@ public:
 	void GetUp();
 	void Zoom(float dR);
 	void Saving();
+
+	bool operator==(CCamera &a);
+	bool operator!=(CCamera &a);
 };

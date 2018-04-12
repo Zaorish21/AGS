@@ -16,42 +16,43 @@
 
 using namespace glm;
 
-// КЛАСС ДЛЯ РАБОТЫ С ШЕЙДЕРОМ
+// РљР›РђРЎРЎ Р”Р›РЇ Р РђР‘РћРўР« РЎ РЁР•Р™Р”Р•Р РћРњ
 class CShader
 {
 private:
 
-	// вершинный шейдер
+	// РІРµСЂС€РёРЅРЅС‹Р№ С€РµР№РґРµСЂ
 	GLuint	Vsh;
-	// фрагментный шейдер
+	// С„СЂР°РіРјРµРЅС‚РЅС‹Р№ С€РµР№РґРµСЂ
 	GLuint	Fsh;
-	// шейдерная программа (шейдер)
+	// С€РµР№РґРµСЂРЅР°СЏ РїСЂРѕРіСЂР°РјРјР° (С€РµР№РґРµСЂ)
 	GLuint	Program;
 
 	std::map<std::string, int> UniformVariables;
 
 public:
 	int LoadShader(char *VertexFileName, int type, bool DebugOutput = true);
-	// загрузить вершинный шейдер
+	// Р·Р°РіСЂСѓР·РёС‚СЊ РІРµСЂС€РёРЅРЅС‹Р№ С€РµР№РґРµСЂ
 	int LoadVertexShader(char *VertexFileName, bool DebugOutput = true);
-	// загрузить фрагментный шейдер
+	// Р·Р°РіСЂСѓР·РёС‚СЊ С„СЂР°РіРјРµРЅС‚РЅС‹Р№ С€РµР№РґРµСЂ
 	int LoadFragmentShader(char *FragmentFileName, bool DebugOutput = true);
-	// слинковать шейдерную программу
+	// СЃР»РёРЅРєРѕРІР°С‚СЊ С€РµР№РґРµСЂРЅСѓСЋ РїСЂРѕРіСЂР°РјРјСѓ
 	int Link(bool DebugOutput = true);
 
-	//	активизировать шейдер (сделать текущим)
+	//	Р°РєС‚РёРІРёР·РёСЂРѕРІР°С‚СЊ С€РµР№РґРµСЂ (СЃРґРµР»Р°С‚СЊ С‚РµРєСѓС‰РёРј)
 	void Activate(void);
-	//	отключить шейдер (использовать нулевую шейдерную программу)
+	//	РѕС‚РєР»СЋС‡РёС‚СЊ С€РµР№РґРµСЂ (РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ РЅСѓР»РµРІСѓСЋ С€РµР№РґРµСЂРЅСѓСЋ РїСЂРѕРіСЂР°РјРјСѓ)
 	static void	Deactivate(void);
 
-	// получение индекса атрибут-переменной
+	// РїРѕР»СѓС‡РµРЅРёРµ РёРЅРґРµРєСЃР° Р°С‚СЂРёР±СѓС‚-РїРµСЂРµРјРµРЅРЅРѕР№
 	int GetAttribLocation(char *name)
 	{
 		return glGetAttribLocation(Program, name);
 	};
 
-	// запись вектора из 4-х комопнент в uniform-переменную
+	// Р·Р°РїРёСЃСЊ РІРµРєС‚РѕСЂР° РёР· 4-С… РєРѕРјРѕРїРЅРµРЅС‚ РІ uniform-РїРµСЂРµРјРµРЅРЅСѓСЋ
 	void SetUniform(std::string name, GLfloat &value);
+	void SetUniform(std::string name, int value);
 	void SetUniform(std::string name, vec4 &value);
 	void SetUniform(std::string name, mat4 &value);
 };

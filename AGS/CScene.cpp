@@ -2,9 +2,7 @@
 
 void CScene::init(void)
 {
-	Shader.LoadVertexShader((char*)"SHADER\\Example.vsh");
-	Shader.LoadFragmentShader((char*)"SHADER\\Example.fsh");
-	Shader.Link();
+	pugi::xml_parse_result result = resources_description.load_file("Resources.xml");
 
 	Light = CreateLight();
 
@@ -14,21 +12,31 @@ void CScene::init(void)
 	TempGraphicObject = CreateGraphicObject("house_1_bl");
 	TempGraphicObject.setPosition(vec3(0, 0, 0));
 	TempGraphicObject.setRotation(0);
+	TempGraphicObject.setID(GraphicObjects.size());
 	GraphicObjects.push_back(TempGraphicObject);
 	// второй объект
 	TempGraphicObject = CreateGraphicObject("light");
 	TempGraphicObject.setPosition(vec3(-6.5, -0.55, 3));
 	TempGraphicObject.setRotation(-90);
+	TempGraphicObject.setID(GraphicObjects.size());
 	GraphicObjects.push_back(TempGraphicObject);
 	// третий объект
 	TempGraphicObject = CreateGraphicObject("light");
 	TempGraphicObject.setPosition(vec3(+6.5, -0.55, 3));
 	TempGraphicObject.setRotation(-90);
+	TempGraphicObject.setID(GraphicObjects.size());
 	GraphicObjects.push_back(TempGraphicObject);
 	// четвертый объект
 	TempGraphicObject = CreateGraphicObject("ambul");
 	TempGraphicObject.setPosition(vec3(+2.5, -1.7, 5.2));
 	TempGraphicObject.setRotation(0);
+	TempGraphicObject.setID(GraphicObjects.size());
+	GraphicObjects.push_back(TempGraphicObject);
+
+	TempGraphicObject = CreateGraphicObject("ambul");
+	TempGraphicObject.setPosition(vec3(+5.5, -1.7, 12.2));
+	TempGraphicObject.setRotation(0);
+	TempGraphicObject.setID(GraphicObjects.size());
 	GraphicObjects.push_back(TempGraphicObject);
 }
 
@@ -59,31 +67,13 @@ CCamera * CScene::getCamera(void)
 
 void CScene::draw()
 {
-	Shader.Activate();
-	// получаем матрицу проекции
-	for (int i = 0; i < GraphicObjects.size(); i++)
-	{
-		mat4 ProjectionMatrix = Camera.GetProjectionMatrix();
-
-		Shader.SetUniform("ProjectionMatrix", ProjectionMatrix);
-
-		mat4 ViewMatrix = Camera.GetViewMatrix();
-
-		Shader.SetUniform("lAmbient", Light.getAmbient());
-		Shader.SetUniform("lDiffuse", Light.getDiffuse());
-		Shader.SetUniform("lSpecular", Light.getSpecular());
-			vec4 vec = ViewMatrix * Light.getPosition();
-		Shader.SetUniform("lPosition", vec);
-
-
-		mat4 ModelViewMatrix1 = ViewMatrix * GraphicObjects[i].getModelMatrix();
-		Shader.SetUniform("ModelViewMatrix", ModelViewMatrix1);
-		Shader.SetUniform("mAmbient", GraphicObjects[i].getMaterial().getAmbient());
-		Shader.SetUniform("mDiffuse", GraphicObjects[i].getMaterial().getDiffuse());
-		Shader.SetUniform("mSpecular", GraphicObjects[i].getMaterial().getSpecular());
-
-		CMesh* mesh = CResourceManager::Instance().GetMesh(GraphicObjects[i].getMesh());
-		if (mesh != nullptr) mesh->Render();
+	// передаем в рендер‐менеджер используемую камеру
+	CRenderManager::Instance().setCamera(Camera);
+	// передаем в рендер‐менеджер используемый источник света
+	CRenderManager::Instance().setLight(Light);
+	// передаем все модели
+	for (auto it = GraphicObjects.begin(); it < GraphicObjects.end(); it++) {
+		CRenderManager::Instance().addToRenderQueue(*it);
 	}
 }
 
@@ -92,7 +82,7 @@ CGraphicObject CScene::CreateGraphicObject(std::string name)
 	CGraphicObject tempGraphicObject;
 	CMaterial tempMaterial;
 	float temp[3];
-	pugi::xml_parse_result result = resources_description.load_file("Resources.xml");
+	
 
 	pugi::xml_node resources = resources_description.child("Resources");
 	pugi::xml_node models = resources.child("Models");
@@ -104,6 +94,12 @@ CGraphicObject CScene::CreateGraphicObject(std::string name)
 	tempGraphicObject.setMesh(CResourceManager::Instance().LoadMesh(mesh_name));
 
 	pugi::xml_node material = model.child("Material");
+
+	pugi::xml_attribute texture = material.child("Texture").attribute("path");
+	char texture_name[128];
+	sprintf_s(texture_name, "%s", texture.value());
+	tempGraphicObject.setTexture(CResourceManager::Instance().LoadTexture(texture_name));
+
 	pugi::xml_node phong = material.child("PhongParameters");
 
 	pugi::xml_attribute diffuse = phong.attribute("diffuse");
@@ -134,7 +130,6 @@ CLight CScene::CreateLight()
 	CLight tempLight;
 
 	float temp[3];
-	pugi::xml_parse_result result = resources_description.load_file("Resources.xml");
 
 	pugi::xml_node resources = resources_description.child("Resources");
 	pugi::xml_node light = resources.child("Light");

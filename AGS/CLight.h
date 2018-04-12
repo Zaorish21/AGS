@@ -29,4 +29,8 @@ public:
 	vec4 &getAmbient();
 	vec4 &getDiffuse();
 	vec4 &getSpecular();
+
+	bool operator==(CLight &a);
+	bool operator!=(CLight &a);
+
 };

@@ -12,7 +12,7 @@ CCamera::CCamera(void)
 	}
 	else
 	{
-		file >> radius >> theta >> fi >>Center.x>>Center.y>>Center.z;
+		file >> radius >> theta >> fi >> Center.x >> Center.y >> Center.z;
 		file.close();
 	}
 	Eye.x = radius * sin(theta)* cos(fi);
@@ -33,12 +33,12 @@ void CCamera::MoveOXZ(float dForward, float dRight)
 	dForward = dForward * Speed;
 	dRight = dRight * Speed;
 	vec3 VForward = normalize(-Eye);
-	
+
 	vec3 DeltaF = vec3(VForward.x * dForward, 0, VForward.z * dForward);
-	
+
 	vec3 DeltaR = normalize(cross(VForward, Up));
 	DeltaR = vec3(DeltaR.x * dRight, 0, DeltaR.z * dRight);
-	
+
 	Center = Center + DeltaF + DeltaR;
 
 	ViewMatrix = lookAt(Eye + Center, Center, Up);
@@ -61,7 +61,7 @@ void CCamera::Rotate(float dHorizAngle, float dVertAngle)
 	{
 		if ((dVertAngle > 0) & (theta < THETA_MAX)) theta += dVertAngle / 360;
 		if ((dVertAngle < 0) & (theta > THETA_MIN)) theta += dVertAngle / 360;
-		
+
 		fi += dHorizAngle / 360;
 		if (fi > 2 * PI) fi -= 2 * PI;
 		if (fi < 0) fi += 2 * PI;
@@ -91,4 +91,14 @@ void CCamera::Saving(void)
 	std::ofstream file("Camera.txt");
 	file << radius << ' ' << theta << ' ' << fi << ' ' << Center.x << ' ' << Center.y << ' ' << Center.z;
 	file.close();
+}
+
+bool CCamera::operator==(CCamera & a)
+{
+	return ((this->ViewMatrix == a.ViewMatrix) && (this->ProjectionMatrix == a.ProjectionMatrix));
+}
+
+bool CCamera::operator!=(CCamera & a)
+{
+	return ((this->ViewMatrix != a.ViewMatrix) || (this->ProjectionMatrix != a.ProjectionMatrix));
 }

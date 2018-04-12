@@ -30,4 +30,7 @@ public:
 	vec4 &getDiffuse();
 	vec4 &getSpecular();
 	float &getShininess();
+
+	bool operator==(CMaterial &a);
+	bool operator!=(CMaterial &a);
 };

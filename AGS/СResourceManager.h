@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CMesh.h"
+#include "CTexture.h"
 
 #include <vector>
 #include <map>
@@ -13,9 +14,11 @@ class CResourceManager
 private:
 	// вектор для хранения всех мешей
 	std::vector<CMesh*> meshes;
+	std::vector<CTexture*> textures;
 	// map для хранения соответствия между именем запрашиваемого файла
 	// и индексом в контейнере meshes
 	std::map <std::string, int> meshes_index;
+	std::map <std::string, int> textures_index;
 private:
 	// конструктор по умолчанию (объявлен приватным)
 	// в результате нельзя создать ни одного объекта данного класса вне самого класса
@@ -37,8 +40,10 @@ public:
 	// Возвращаемое значение: индекс меша в менеджере ресурсов
 	// Осуществляется проверка на попытку загрузки ранее загруженного меша
 	int LoadMesh(std::string filename);
+	int LoadTexture(std::string filename);
 	// Получение меша по его индексу.
 	// Если такого меша нет (не действительный индекс) возвращается nullptr
 	CMesh* GetMesh(int index);
+	CTexture* GetTexture(int index);
 };
 

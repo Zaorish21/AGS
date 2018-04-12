@@ -9,6 +9,7 @@
 #include "CLight.h"
 #include "CGraphicObject.h"
 #include "СResourceManager.h"
+#include "CRenderManager.h"
 
 class CScene
 {

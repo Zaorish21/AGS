@@ -39,3 +39,13 @@ float &CMaterial::getShininess()
 {
 	return shininess;
 }
+
+bool CMaterial::operator==(CMaterial & a)
+{
+	return ((ambient == a.ambient) && (diffuse == a.diffuse) && (specular == a.specular) && (shininess == a.shininess));
+}
+
+bool CMaterial::operator!=(CMaterial & a)
+{
+	return ((ambient != a.ambient) || (diffuse != a.diffuse) || (specular != a.specular) || (shininess != a.shininess));
+}
