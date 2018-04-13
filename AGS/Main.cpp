@@ -1,4 +1,5 @@
-﻿#include "Data.h"
+﻿
+#include "Data.h"
 #include "CRenderManager.h"
 #include "CTexture.h"
 using namespace glm;

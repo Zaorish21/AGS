@@ -1,6 +1,5 @@
 #include "CTexture.h"
 #include <iostream>
-#include <Windows.h>
 void CTexture::Load(const char * filename)
 {
 	ILuint TextureID = ilGenImage();

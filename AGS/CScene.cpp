@@ -9,40 +9,96 @@ void CScene::init(void)
 	// временная локальная переменная
 	CGraphicObject TempGraphicObject;
 	// первый объект
-	TempGraphicObject = CreateGraphicObject("house_1_bl");
-	TempGraphicObject.setPosition(vec3(0, 0, 0));
-	TempGraphicObject.setRotation(0);
-	TempGraphicObject.setID(GraphicObjects.size());
-	GraphicObjects.push_back(TempGraphicObject);
-	// второй объект
-	TempGraphicObject = CreateGraphicObject("light");
-	TempGraphicObject.setPosition(vec3(-6.5, -0.55, 3));
-	TempGraphicObject.setRotation(-90);
-	TempGraphicObject.setID(GraphicObjects.size());
-	GraphicObjects.push_back(TempGraphicObject);
-	// третий объект
-	TempGraphicObject = CreateGraphicObject("light");
-	TempGraphicObject.setPosition(vec3(+6.5, -0.55, 3));
-	TempGraphicObject.setRotation(-90);
-	TempGraphicObject.setID(GraphicObjects.size());
-	GraphicObjects.push_back(TempGraphicObject);
-	// четвертый объект
-	TempGraphicObject = CreateGraphicObject("ambul");
-	TempGraphicObject.setPosition(vec3(+2.5, -1.7, 5.2));
-	TempGraphicObject.setRotation(0);
-	TempGraphicObject.setID(GraphicObjects.size());
-	GraphicObjects.push_back(TempGraphicObject);
+	WSADATA wsa;
+	
+	printf("\nInitialising Winsock...");
+	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+		printf("Failed. Error Code : %d\n", WSAGetLastError());
+	}
+	else {
+		printf("OK\n");
+	}
+	
+	s = socket(AF_INET, SOCK_STREAM, 0);
+	if (s == INVALID_SOCKET) {
+		printf("Could not create socket : %d\n", WSAGetLastError());
+	}
+	else {
+		printf("Socket created.\n");
+	}
+	
+	sockaddr_in server;
+	server.sin_family = AF_INET;
+	server.sin_addr.s_addr = inet_addr("127.0.0.1");
+	server.sin_port = htons(27000);
+	// подключение к серверу
+	int connect_error = connect(s, (struct sockaddr *)&server, sizeof(server));
+	if (connect_error == SOCKET_ERROR) {
+		printf("Connection failed : %d\n", WSAGetLastError());
+	}
+	else {
+		printf("Connection is established.\n");
+	};
 
-	TempGraphicObject = CreateGraphicObject("ambul");
-	TempGraphicObject.setPosition(vec3(+5.5, -1.7, 12.2));
-	TempGraphicObject.setRotation(0);
-	TempGraphicObject.setID(GraphicObjects.size());
-	GraphicObjects.push_back(TempGraphicObject);
+	// запрос приветственного сообщения (код запроса ‐ 0)
+	SNetworkHader header;
+	header.transactionID = transID; // номер транзакции
+	header.frameNumber = 1; // первый пакет ...
+	header.frameCount = 1; // ... из одного
+	header.dataLen = 1; // отправляется один байт данных (код запроса)
+	header.funcID = 0; // код запроса = 0 (запрос приветственного сообщения)
+	int send_bytes_count = send(s, (const char*)&header, sizeof(header), 0);
+	if (send_bytes_count < sizeof(header)) {
+		printf("Data was not send: %d.\n", WSAGetLastError());
+	}
+	// считывание приветственного сообщения с сервера (код запроса ‐ 0)
+	int receive_data_count = recv(s, (char*)&header, sizeof(header), 0);
+	if (receive_data_count <= 0) {
+		printf("Data was not received: %d.\n", WSAGetLastError());
+	}
+	else {
+		char *str = new char[header.dataLen - 1];
+		recv(s, str, header.dataLen - 1, 0);
+		printf("%s\n", str);
+		delete[] str;
+	};
+
 }
 
 void CScene::simulate(float sec)
 {
-	
+	SNetworkHader header;
+	header.transactionID = ++transID; 
+	header.frameNumber = 1; 
+	header.frameCount = 1; 
+	header.dataLen = 1; 
+	header.funcID = 1; 
+	int send_bytes_count = send(s, (const char*)&header, sizeof(header), 0);
+	if (send_bytes_count < sizeof(header)) {
+		printf("Data was not send: %d.\n", WSAGetLastError());
+	}
+
+	int receive_data_count = recv(s, (char*)&header, sizeof(header), 0);
+	if (receive_data_count <= 0) {
+		printf("Data was not received: %d.\n", WSAGetLastError());
+	}
+	else {
+		int count;
+		recv(s, reinterpret_cast<char*>(&count), sizeof(int), 0);
+		SGameObjectDescription Description;
+		CGraphicObject tempGraphicObject;
+		for (int i = 0; i < count; i++)
+		{
+			recv(s, reinterpret_cast<char*>(&Description), sizeof(Description), 0);
+			tempGraphicObject = CreateGraphicObject(Description.Model);
+			tempGraphicObject.setID(Description.ObjectID);
+			tempGraphicObject.setPosition(vec3(Description.x, Description.y, Description.z));
+			tempGraphicObject.setRotation(-Description.Yaw);
+			
+			GraphicObjects[Description.ObjectID] = tempGraphicObject;
+		}
+	};
+
 	bool Forward = GetAsyncKeyState(VK_UP);
 	bool Back = GetAsyncKeyState(VK_DOWN);
 	bool Left = GetAsyncKeyState(VK_LEFT);
@@ -72,9 +128,10 @@ void CScene::draw()
 	// передаем в рендер‐менеджер используемый источник света
 	CRenderManager::Instance().setLight(Light);
 	// передаем все модели
-	for (auto it = GraphicObjects.begin(); it < GraphicObjects.end(); it++) {
-		CRenderManager::Instance().addToRenderQueue(*it);
-	}
+	for (auto it = GraphicObjects.begin(); it != GraphicObjects.end(); it++) {
+		CRenderManager::Instance().addToRenderQueue(it->second);
+	};
+
 }
 
 CGraphicObject CScene::CreateGraphicObject(std::string name)

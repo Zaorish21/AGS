@@ -8,7 +8,7 @@ std::vector<std::string> LoadFile(char *FileName, int &size) {
 	if (VertexFile) {
 		while (std::getline(VertexFile, str))
 		{
-			std::cout << str << std::endl;
+			//std::cout << str << std::endl;
 			file.push_back(str + "\n");
 		}
 		size = file.size();
