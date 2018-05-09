@@ -29,5 +29,6 @@ void CTexture::Load(const char * filename)
 
 void CTexture::Apply(GLenum texUnit)
 {
+	glActiveTexture(texUnit);
 	glBindTexture(GL_TEXTURE_2D, TexIndex);
 }

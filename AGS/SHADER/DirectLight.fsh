@@ -36,7 +36,7 @@ void main (void)
 
 	vec4	TexColor = texture (tex, TexCoord);
 	vec3	Color = vec3(Ambient + Diffuse + Specular) * vec3(TexColor);	
-	
+
 	float 	fog_start = 100.0f;
 	float 	fog_end = 200.0f;
 	float	fog_density = 0.55;

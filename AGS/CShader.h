@@ -55,6 +55,7 @@ public:
 	// запись вектора из 4-х комопнент в uniform-переменную
 	void SetUniform(std::string name, GLfloat &value);
 	void SetUniform(std::string name, int value);
-	void SetUniform(std::string name, vec4 &value);
+	void SetUniform(std::string name, const vec4 &value);
+	void SetUniformMat4(std::string name, const mat4 & value);
 	void SetUniform(std::string name, mat4 &value);
 };

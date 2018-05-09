@@ -139,7 +139,7 @@ void CShader::SetUniform(std::string name, GLfloat &value)
 }
 
 
-void CShader::SetUniform(std::string name, vec4 &value)
+void CShader::SetUniform(std::string name, const vec4 &value)
 {
 	int uniformID;
 	auto variable = UniformVariables.find(name);
@@ -157,7 +157,7 @@ void CShader::SetUniform(std::string name, vec4 &value)
 	glUniform4fv(uniformID, 1, value_ptr(value));
 }
 
-void CShader::SetUniform(std::string name, mat4 &value)
+void CShader::SetUniformMat4(std::string name,const mat4 &value)
 {
 	int uniformID;
 	auto variable = UniformVariables.find(name);

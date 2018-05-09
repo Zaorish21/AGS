@@ -28,6 +28,11 @@ mat4 CCamera::GetViewMatrix()
 	return ViewMatrix;
 }
 
+vec3 CCamera::GetPosition()
+{
+	return Eye + Center;
+}
+
 void CCamera::MoveOXZ(float dForward, float dRight)
 {
 	dForward = dForward * Speed;

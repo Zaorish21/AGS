@@ -2,7 +2,7 @@
 
 #include "CMesh.h"
 #include "CTexture.h"
-
+#include "CCubeTexture.h"
 #include <vector>
 #include <map>
 #include <string>
@@ -41,6 +41,7 @@ public:
 	// Осуществляется проверка на попытку загрузки ранее загруженного меша
 	int LoadMesh(std::string filename);
 	int LoadTexture(std::string filename);
+	int LoadCubeTexture(std::string filename);
 	// Получение меша по его индексу.
 	// Если такого меша нет (не действительный индекс) возвращается nullptr
 	CMesh* GetMesh(int index);

@@ -47,6 +47,7 @@ public:
 	mat4 GetProjectionMatrix(void);
 	// получить матрицу камеры (наблюдения)
 	mat4 GetViewMatrix(void);
+	vec3 GetPosition();
 	// передвинуть камеру и точку наблюдения в горизонтальной плоскости oXZ
 	void MoveOXZ(float dForward, float dRight);
 	// вращение в горизонтальной и вертикальной плоскости

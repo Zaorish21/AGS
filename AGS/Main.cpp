@@ -1,9 +1,9 @@
-﻿
+﻿#include "CScene.h"
 #include "Data.h"
 #include "CRenderManager.h"
 #include "CTexture.h"
 using namespace glm;
-
+CScene Scene;
 // функция вызывается при перерисовке окна
 // в том числе и принудительно, по командам glutPostRedisplay
 void Display(void)
@@ -28,7 +28,14 @@ void Display(void)
 		seconds = 0;
 		glutSetWindowTitle(currentState);
 	}
-	sprintf_s(currentState, 100, "FPS : [%d], UBO update: [%d]", FPS,CRenderManager::UBOUpdateCount);
+	if (!AABB)
+	{
+		sprintf_s(currentState, 100, "FPS : [%d], Object count: [%d], Object on screen [%d], UBO update: [%d]", FPS, Objects, ObjectCount, CRenderManager::UBOUpdateCount);
+	}
+	else
+	{
+		sprintf_s(currentState, 100, "FPS : [%d], Object count: [%d], Object on screen [%d], UBO update: [%d], Frustum Culling", FPS, Objects, ObjectCount, CRenderManager::UBOUpdateCount);
+	}
 	glutSwapBuffers();
 };
 
@@ -37,7 +44,7 @@ void Reshape(int w, int h)
 {
 	// установить новую область просмотра, равную всей области окна
 	glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-	Scene.getCamera()->SetProjectionMatrix(radians(35.0), (float)w / h, 1, 100);
+	Scene.getCamera()->SetProjectionMatrix(radians(35.0), (float)w / h, 1, 500);
 };
 
 void MouseWheel(int wheel, int direction, int x, int y)

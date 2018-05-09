@@ -126,10 +126,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CCamera.cpp" />
+    <ClCompile Include="CCubeTexture.cpp" />
     <ClCompile Include="CGraphicObject.cpp" />
     <ClCompile Include="CLight.cpp" />
     <ClCompile Include="CMaterial.cpp" />
     <ClCompile Include="CMesh.cpp" />
+    <ClCompile Include="CNetProtocol.cpp" />
     <ClCompile Include="CRenderManager.cpp" />
     <ClCompile Include="CScene.cpp" />
     <ClCompile Include="CShader.cpp" />
@@ -141,10 +143,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCamera.h" />
+    <ClInclude Include="CCubeTexture.h" />
     <ClInclude Include="CGraphicObject.h" />
     <ClInclude Include="CLight.h" />
     <ClInclude Include="CMaterial.h" />
     <ClInclude Include="CMesh.h" />
+    <ClInclude Include="CNetProtocol.h" />
     <ClInclude Include="CRenderManager.h" />
     <ClInclude Include="CScene.h" />
     <ClInclude Include="CShader.h" />

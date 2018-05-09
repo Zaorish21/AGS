@@ -18,27 +18,34 @@ private:
 	// используемый меш (индекс в менеджере ресурсов)
 	int meshID;
 	int textureID;
+	bool init;
 	// используемый материал
 	CMaterial material;
 	// матрица модели (задает позицию и ориентацию)
 	mat4 modelMatrix;
+	vec3 AABB;
 public:
 	// конструктор по умолчанию
-	CGraphicObject(void) {};
+	CGraphicObject(void) { init = false; };
 	// установка внутренних полей
 	void setID(int ID);
 	void setMesh(int meshID);
+	void setInit() { init = true; };
 	void setTexture(int textureID);
 	void setMaterial(CMaterial& material);
 	void setPosition(vec3 position);
 	void setRotation(float degree);
-	// получение различных параметров
+	void setAABB(vec3 AABB);
+
 	int getMesh(void);
 	int getTexture(void);
 	int getID(void);
 	CMaterial& getMaterial(void);
 	mat4 getModelMatrix(void);
-	// оператор сравнения
+	vec3 getAABB();
+
+	bool itInit() { return init; };
+	
 	bool operator==(CGraphicObject &a);
 	bool operator!=(CGraphicObject &a);
 };

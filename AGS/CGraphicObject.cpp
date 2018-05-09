@@ -40,6 +40,11 @@ void CGraphicObject::setRotation(float degree)
 	this->modelMatrix = modelMatrix * Rotate;
 }
 
+void CGraphicObject::setAABB(vec3 AABB)
+{
+	this->AABB = AABB;
+}
+
 int CGraphicObject::getMesh(void)
 {
 	return meshID;
@@ -64,6 +69,11 @@ CMaterial & CGraphicObject::getMaterial(void)
 mat4 CGraphicObject::getModelMatrix(void)
 {
 	return modelMatrix;
+}
+
+vec3 CGraphicObject::getAABB()
+{
+	return AABB;
 }
 
 bool CGraphicObject::operator==(CGraphicObject & a)
